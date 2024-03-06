@@ -1,4 +1,4 @@
-# Depenencies
+# Dependencies
 ```
 sudo pacman -S neovim python-pynvim kitty zsh lazygit
 ```
