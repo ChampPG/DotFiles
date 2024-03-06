@@ -10,7 +10,9 @@ fi
 USER_HOME=$(eval echo ~$1)
 
 # Install dependencies
-sudo pacman -S neovim python-pynvim kitty zsh lazygit fzf fd
+sudo pacman -S neovim python-pynvim kitty zsh lazygit fzf fd nvm
+
+nvm install node
 
 # Function to move existing files to .bak directory
 move_to_backup() {
