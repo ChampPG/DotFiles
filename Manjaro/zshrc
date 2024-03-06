@@ -1,3 +1,18 @@
+# Use powerline
+USE_POWERLINE="true"
+# Has weird character width
+# Example:
+#    is not a diamond
+HAS_WIDECHARS="false"
+# Source manjaro-zsh-configuration
+if [[ -e /usr/share/zsh/manjaro-zsh-config ]]; then
+  source /usr/share/zsh/manjaro-zsh-config
+fi
+# Use manjaro zsh prompt
+if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]]; then
+  source /usr/share/zsh/manjaro-zsh-prompt
+fi
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -30,17 +45,6 @@ setopt complete_aliases  # Allow for completion when using aliases
 [[ -e $HOME/.antidote ]] ||
 git clone --depth=1 https://github.com/mattmc3/antidote.git $HOME/.antidote
 
-
-# # Lazy-load antidote and generate the static load file only when needed
-# zsh_plugins=${ZDOTDIR:-$HOME}/.zsh_plugins
-# if [[ ! ${zsh_plugins}.zsh -nt ${zsh_plugins}.txt ]]; then
-#   (
-#     source $HOME/.antidote/antidote.zsh
-#     antidote bundle <${zsh_plugins}.txt >${zsh_plugins}.zsh
-#   )
-# fi
-# source ${zsh_plugins}.zsh
-
 # source antidote
 source ${ZDOTDIR:-~}/.antidote/antidote.zsh
 
@@ -72,7 +76,6 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 source ~/powerlevel10k/powerlevel10k.zsh-theme
-
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
