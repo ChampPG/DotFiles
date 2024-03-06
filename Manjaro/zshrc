@@ -65,6 +65,7 @@ alias py="python3"
 alias e="exit"
 alias install="sudo pacman -S"
 alias search="sudo pacman -Ss"
+alias lg="lazygit"
 
 #export PATH="$PATH:/home/ppg/.local/share/bob/nvim-bin"
 #export PATH="$PATH:/home/ppg/.cargo/bin"

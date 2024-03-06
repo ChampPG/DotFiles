@@ -46,5 +46,6 @@ ln -s "$PWD/powerlevel10k" "$USER_HOME/"
 ln -s "$PWD/p10k.zsh" "$USER_HOME/.p10k.zsh"
 ln -s "$PWD/zsh_plugins.txt" "$USER_HOME/.zsh_plugins.txt"
 ln -s "$PWD/zshrc" "$USER_HOME/.zshrc"
+ln -s "$PWD/Themes" "$USER_HOME/.themes"
 
 echo "Setup complete!"

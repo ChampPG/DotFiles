@@ -3,7 +3,9 @@
 -- Add any additional autocmds here
 
 -- Don't auto-comment new lines after commented line
-vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+vim.api.nvim_create_autocmd("FileType", {
   pattern = "*",
-  command = "setlocal formatoptions-=ro",
+  callback = function()
+    vim.opt_local.formatoptions:remove({ 'r', 'o' })
+  end,
 })
