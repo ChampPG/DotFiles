@@ -8,7 +8,12 @@
 # Standard installed
 sudo pacman -S discord telegram-desktop syncthing \
   nfs-utils obsidian torbrowser-launcher wireguard-tools nmap \
-  python3 python-virtualenv curl wget 
+  python3 python-virtualenv curl wget github-cli
 
-
-
+# cd /opt
+# sudo git clone https://aur.archlinux.org/yay-git.git
+# sudo chown -R $1:$1 ./yay-git
+# cd yay-git
+# sudo pacman -S --needed base-devel
+# makepkg -si
+#

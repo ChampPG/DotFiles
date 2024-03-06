@@ -66,6 +66,7 @@ alias e="exit"
 alias install="sudo pacman -S"
 alias search="sudo pacman -Ss"
 alias lg="lazygit"
+alias pkgsearch="yay -Slq | fzf --multi --preview 'yay -Si {1}' | xargs -ro yay -S"
 
 #export PATH="$PATH:/home/ppg/.local/share/bob/nvim-bin"
 #export PATH="$PATH:/home/ppg/.cargo/bin"

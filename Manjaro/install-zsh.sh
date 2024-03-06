@@ -1,16 +1,15 @@
-#!/bin/bash
+#!/usr/bin/zsh
 
-# Check if username is provided
+
 if [ -z "$1" ]; then
-    echo "Usage: $0 <username>"
-    exit 1
+  echo "Usage: $0 <username>"
+  exit 1
 fi
 
 # Resolve full path of the user's home directory
 USER_HOME=$(eval echo ~$1)
 
-# Install dependencies
-sudo pacman -S neovim python-pynvim kitty zsh lazygit fzf fd nvm xclip
+nvm install node
 
 # Function to move existing files to .bak directory
 move_to_backup() {
