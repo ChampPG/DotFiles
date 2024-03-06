@@ -36,7 +36,7 @@ move_to_backup "$USER_HOME/.p10k.zsh"
 # Symlink files to respective directories
 ln -s "$PWD/Backgrounds" "$USER_HOME/Pictures/"
 ln -s "$PWD/fonts" "$USER_HOME/.fonts"
-ln -s "$PWD/nvm" "$USER_HOME/.config/"
+#ln -s "$PWD/nvm" "$USER_HOME/.config/"
 ln -s "$PWD/kitty" "$USER_HOME/.config/"
 ln -s "$PWD/nvim" "$USER_HOME/.config/"
 ln -s "$PWD/powerlevel10k" "$USER_HOME/"
