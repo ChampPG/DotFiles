@@ -1,0 +1,82 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# make history nicer
+# ------------------
+HISTSIZE=1048576
+HISTFILE="$HOME/.zsh_history"
+SAVEHIST=$HISTSIZE
+setopt appendhistory
+setopt incappendhistory
+setopt extendedhistory
+setopt histignorealldups
+setopt histignorespace
+
+# zsh opts
+# --------
+setopt correct           # Auto-correct mistakes
+setopt nocaseglob        # Case insensitive globbing
+setopt numericglobsort   # Sort filesnames numerically when sane
+setopt nobeep            # Don't beep
+setopt autocd            # Automatically cd if only dirpath
+setopt complete_aliases  # Allow for completion when using aliases
+
+# Clone antidote (plugin manager) if necessary.
+# ---------------------------------------------
+[[ -e $HOME/.antidote ]] ||
+git clone --depth=1 https://github.com/mattmc3/antidote.git $HOME/.antidote
+
+
+# # Lazy-load antidote and generate the static load file only when needed
+# zsh_plugins=${ZDOTDIR:-$HOME}/.zsh_plugins
+# if [[ ! ${zsh_plugins}.zsh -nt ${zsh_plugins}.txt ]]; then
+#   (
+#     source $HOME/.antidote/antidote.zsh
+#     antidote bundle <${zsh_plugins}.txt >${zsh_plugins}.zsh
+#   )
+# fi
+# source ${zsh_plugins}.zsh
+
+# source antidote
+source ${ZDOTDIR:-~}/.antidote/antidote.zsh
+
+# initialize plugins statically with ${ZDOTDIR:-~}/.zsh_plugins.txt
+antidote load
+
+# ZSH VI MODE CONFIGURATION
+function zvm_config() {
+    ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
+    ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_NEX
+}
+
+source /usr/share/doc/fzf/examples/key-bindings.zsh
+
+alias v="nvim"
+alias py="python3"
+alias e="exit"
+alias install="sudo apt install"
+alias search="sudo apt search"
+
+export PATH="$PATH:/home/ppg/.local/share/bob/nvim-bin"
+export PATH="$PATH:/home/ppg/.cargo/bin"
+
+export EDITOR="/home/ppg/.local/share/bob/nvim-bin/nvim"
+export SUDOEDITOR="/home/ppg/.local/share/bob/nvim-bin/nvim"
+export SUDO_EDITOR="/home/ppg/.local/share/bob/nvim-bin/nvim"
+
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
+source ~/powerlevel10k/powerlevel10k.zsh-theme
+
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
