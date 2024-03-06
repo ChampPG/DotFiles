@@ -57,20 +57,25 @@ function zvm_config() {
     ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_NEX
 }
 
-source /usr/share/doc/fzf/examples/key-bindings.zsh
+#source /usr/share/doc/fzf/examples/key-bindings.zsh
+source /usr/share/fzf/key-bindings.zsh
 
 alias v="nvim"
 alias py="python3"
 alias e="exit"
-alias install="sudo apt install"
-alias search="sudo apt search"
+alias install="sudo pacman -S"
+alias search="sudo pacman -Ss"
 
-export PATH="$PATH:/home/ppg/.local/share/bob/nvim-bin"
-export PATH="$PATH:/home/ppg/.cargo/bin"
+#export PATH="$PATH:/home/ppg/.local/share/bob/nvim-bin"
+#export PATH="$PATH:/home/ppg/.cargo/bin"
 
-export EDITOR="/home/ppg/.local/share/bob/nvim-bin/nvim"
-export SUDOEDITOR="/home/ppg/.local/share/bob/nvim-bin/nvim"
-export SUDO_EDITOR="/home/ppg/.local/share/bob/nvim-bin/nvim"
+#export EDITOR="/home/ppg/.local/share/bob/nvim-bin/nvim"
+#export SUDOEDITOR="/home/ppg/.local/share/bob/nvim-bin/nvim"
+#export SUDO_EDITOR="/home/ppg/.local/share/bob/nvim-bin/nvim"
+
+export EDITOR="/usr/bin/nvim"
+export SUDOEDITOR="/usr/bin/nvim"
+export SUDO_EDITOR="/usr/bin/nvim"
 
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
