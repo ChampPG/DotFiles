@@ -10,7 +10,7 @@ fi
 USER_HOME=$(eval echo ~$1)
 
 # Install dependencies
-sudo pacman -S neovim python-pynvim kitty zsh lazygit
+sudo pacman -S neovim python-pynvim kitty zsh lazygit fzf fd
 
 # Create directories if they don't exist
 mkdir -p "$USER_HOME/powerlevel10k/"
