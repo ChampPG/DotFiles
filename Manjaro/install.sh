@@ -44,7 +44,7 @@ mkdir -p "$USER_HOME/.fonts/"
 
 # Symlink files to respective directories
 ln -s "$PWD/Backgrounds" "$USER_HOME/Pictures/"
-ln -s "$PWD/fonts" "$USER_HOME/.fonts/"
+ln -s "$PWD/fonts" "$USER_HOME/.fonts"
 ln -s "$PWD/nvm" "$USER_HOME/.config/"
 ln -s "$PWD/kitty" "$USER_HOME/.config/"
 ln -s "$PWD/nvim" "$USER_HOME/.config/"
