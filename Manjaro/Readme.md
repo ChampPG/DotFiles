@@ -15,3 +15,5 @@ sudo pacman -S neovim python-pynvim kitty zsh lazygit fzf fd node
 ~/.p10k.zsh
 ~/.zsh_plugins.txt
 ```
+# TODO
+Add themes to repo for easy install
