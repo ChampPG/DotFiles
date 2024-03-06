@@ -34,13 +34,13 @@ move_to_backup "$USER_HOME/.zsh_plugins.txt"
 move_to_backup "$USER_HOME/.p10k.zsh"
 
 # Create directories if they don't exist
-mkdir -p "$USER_HOME/powerlevel10k/"
-mkdir -p "$USER_HOME/.config/nvim"
-mkdir -p "$USER_HOME/.config/kitty"
-mkdir -p "$USER_HOME/.config/zsh"
-mkdir -p "$USER_HOME/.config/nvm"
+#mkdir -p "$USER_HOME/powerlevel10k/"
+#mkdir -p "$USER_HOME/.config/nvim"
+#mkdir -p "$USER_HOME/.config/kitty"
+#mkdir -p "$USER_HOME/.config/zsh"
+#mkdir -p "$USER_HOME/.config/nvm"
 mkdir -p "$USER_HOME/.fonts/"
-mkdir -p "$USER_HOME/Pictures/Backgrounds"
+#mkdir -p "$USER_HOME/Pictures/Backgrounds"
 
 # Symlink files to respective directories
 ln -s "$PWD/Backgrounds" "$USER_HOME/Pictures/"
