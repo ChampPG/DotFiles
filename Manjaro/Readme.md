@@ -1,6 +1,6 @@
 # Dependencies
 ```
-sudo pacman -S neovim python-pynvim kitty zsh lazygit
+sudo pacman -S neovim python-pynvim kitty zsh lazygit fzf fd
 ```
 
 # File Structure
