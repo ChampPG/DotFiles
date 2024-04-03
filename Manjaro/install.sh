@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+echo "Starting migration"
 
 # Check if username is provided
 if [ -z "$1" ]; then
