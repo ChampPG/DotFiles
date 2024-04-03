@@ -7,7 +7,12 @@ local cmd = vim.cmd
 -- ==behavior== --
 opt.clipboard = "" -- do NOT use system clipboard (unnamedplus), the default LazyVim behavior
 
-vim.g.python3_host_prog = "/usr/bin/python3"
+-- Non-NixOS
+-- vim.g.python3_host_prog = "/usr/bin/python3"
+
+-- NixOS
+vim.g.python3_host_prog = "/run/current-system/sw/bin/python3"
+
 -- disable format on save (works w/ LSP, format functions, etc. in LazyVim)
 vim.g.autoformat = false
 
