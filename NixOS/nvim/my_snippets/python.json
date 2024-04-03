@@ -1,0 +1,9 @@
+{
+  "lists_to_chunks": {
+    "prefix": "chunks",
+    "body": [
+      "zip(*(iter(${1:the_list}),) * ${2:chunk_size})"
+    ],
+    "description": "Split a list into chunks of n size"
+  }
+}
