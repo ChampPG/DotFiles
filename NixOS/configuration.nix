@@ -36,7 +36,7 @@ in
         }
         { 
           name = "powerlevel10k-config";
-          src = /home/ppg/DotFiles/NixOS;
+          src = /home/${user}/DotFiles/NixOS;
           file = "p10k.zsh";
         }
       ];
@@ -67,7 +67,7 @@ in
 
       history.size = 10000;
       #history.path = "${config.xdg.dataHome}/zsh/history";
-      history.path = "../../.zsh_history";
+      history.path = "/home/${user}.zsh_history";
     };
     home.file.".config/nvim" = {
       source = /home/${user}/DotFiles/NixOS/nvim;
@@ -182,7 +182,7 @@ in
   services.printing.enable = true;
 
   # Add user to the audio and video group.
-  users.extraUsers.ppg.extraGroups = ["audio"];
+  users.extraUsers.${user}.extraGroups = ["audio"];
 
   # Enable full Pulse Audio package
   hardware.pulseaudio.package = pkgs.pulseaudioFull;
