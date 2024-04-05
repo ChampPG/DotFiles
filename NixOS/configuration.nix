@@ -4,29 +4,37 @@
 
 { config, pkgs, lib, ... }:
 let
+  # Add home-manager to configuration.nix
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.11.tar.gz";
+
+  # Run the commands below before updating config
   # sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
   # sudo nix-channel --update
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+
+  # Change to your user and hostname here
   user = "ppg";
+  hostname = "noiamnothere";
 in
 {
+  # Importing hardware configuration and home-manager
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       (import "${home-manager}/nixos")
     ];
 
+  # Allow flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # home-manager configurations
   home-manager.users.${user} = {
-    /* The home.stateVersion option does not have a default and must be set */
     home.stateVersion = "23.11";
-    /* Here goes the rest of your home-manager config, e.g. home.packages = [ pkgs.foo ]; */
+    
+    # zsh configurations
     programs.zsh = {
       enable = true;
       enableCompletion = true;
-      #autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
       plugins = [
         {
@@ -66,14 +74,17 @@ in
       };
 
       history.size = 10000;
-      #history.path = "${config.xdg.dataHome}/zsh/history";
       history.path = "/home/${user}.zsh_history";
     };
+
+    # Set location for nvim config to DotFiles repo in home directory
     home.file.".config/nvim" = {
       source = /home/${user}/DotFiles/NixOS/nvim;
       recursive = true;
       executable = true;
     };
+
+    # Add fuzzy finder integration
     programs.fzf = {
       enable = true;
       enableZshIntegration = true;
@@ -82,6 +93,9 @@ in
 	"--exact"
       ];
     };
+
+    # Kitty configuration
+    # https://sw.kovidgoyal.net/kitty/conf/
     programs.kitty = {
        enable = true;
        theme = "Catppuccin-Mocha";
@@ -110,20 +124,6 @@ in
          map ctrl+; combine : clear_terminal scrollback active : send_text normal,application \x0c
        ";
     };
-    #programs.neovim = {
-    #  enable = true;
-    #  defaultEditor = true;
-    #  plugins = with pkgs.vimPlugins; [
-    #    LazyVim
-    #	nvim-treesitter 
-    #	nvim-treesitter.withAllGrammars
-    #	nvim-treesitter-parsers.c
-    #  ];
-    #  extraPackages = with pkgs; [
-    #    python311Packages.pynvim
-    #	python3
-    #  ];
-    #};
   };
 
   # Bootloader.
@@ -135,12 +135,10 @@ in
   boot.loader.grub.device = "nodev";
   boot.loader.grub.useOSProber = true;
 
-  networking.hostName = "noiamnothere"; # Define your hostname.
+  # Setting Hostname
+  networking.hostName = "${hostname}"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -170,8 +168,6 @@ in
   services.xserver.displayManager.lightdm.enable = true;
   services.xserver.desktopManager.xfce.enable = true;
 
-  #services.xserver.windowManager.qtile.enable = true;
-
   # Configure keymap in X11
   services.xserver = {
     layout = "us";
@@ -199,6 +195,7 @@ in
   };
   services.actkbd = {
     enable = true;
+    # Fix for lenovo T15 volume buttons
     bindings = [
       { keys = [ 113 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master toggle'"; }
       { keys = [ 114 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master 5%- unmute'"; }
@@ -213,6 +210,14 @@ in
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
 
+  # Install Nerd Font
+  fonts.packages = with pkgs; [
+    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+  ];
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${user} = {
     isNormalUser = true;
@@ -221,55 +226,62 @@ in
     packages = with pkgs; [
       firefox
       vesktop
-      sdrpp
       neovim
+      sdrpp
     ];
-  };
-
-  fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-  ];
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  };   
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    grim
-    slurp
-    wl-clipboard
-    mako
-    wget
-    btop
-    cowsay
-    fortune
-    lazygit
-    kitty
-    xclip
-    tree
+    # Programming
+    gcc
+    nodejs_21
+    tree-sitter
+    # unstable python3 require for latest version of pynvim still works with stable
     (unstable.python3.withPackages (ps: with ps; [
       pip
       pynvim
     ]))
-    tree-sitter
-    unzip
-    nodejs_21
-    zsh
-    neofetch
-    git
+
+    # Drivers
     rtl-sdr
+
+    # Clipboards
+    xclip
+    wl-clipboard
+
+    # Terminal
+    zsh
+    tmux
+    kitty
+
+    # Productivity
     gh
-    gcc
     fd
     fzf
+    git
+    wget
+    unzip
     procps
-    tmux
     ripgrep
     remmina
-    syncthing
+    lazygit
     electron
+    syncthing
     unstable.obsidian
+
+    # Misc
+    tree
+    grim
+    mako
+    slurp
+
+    # Fun
+    btop
+    cowsay
+    fortune
+    neofetch
     tty-solitaire
   ];
 

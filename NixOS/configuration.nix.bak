@@ -2,10 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.11.tar.gz";
+  # sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
+  # sudo nix-channel --update
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+  user = "ppg";
 in
 {
   imports =
@@ -14,15 +17,16 @@ in
       (import "${home-manager}/nixos")
     ];
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  home-manager.users.ppg = {
+  home-manager.users.${user} = {
     /* The home.stateVersion option does not have a default and must be set */
-    home.stateVersion = "18.09";
+    home.stateVersion = "23.11";
     /* Here goes the rest of your home-manager config, e.g. home.packages = [ pkgs.foo ]; */
     programs.zsh = {
       enable = true;
       enableCompletion = true;
-      autosuggestion.enable = true;
+      #autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
       plugins = [
         {
@@ -32,7 +36,7 @@ in
         }
         { 
           name = "powerlevel10k-config";
-          src = ./p10k-config;
+          src = /home/${user}/DotFiles/NixOS;
           file = "p10k.zsh";
         }
       ];
@@ -52,15 +56,23 @@ in
         v = "nvim";
 	e = "exit";
 	c = "clear";
+	cs = "sudo nix-store --gc";
 	py = "python3";
         lg = "lazygit";
         ll = "ls -l";
+	edit = "sudo nvim /etc/nixos/configuration.nix";
         update = "sudo nixos-rebuild switch";
+	test = "sudo nixos-rebuild test";
       };
 
       history.size = 10000;
       #history.path = "${config.xdg.dataHome}/zsh/history";
-      history.path = "$HOME/.zsh_history";
+      history.path = "/home/${user}.zsh_history";
+    };
+    home.file.".config/nvim" = {
+      source = /home/${user}/DotFiles/NixOS/nvim;
+      recursive = true;
+      executable = true;
     };
     programs.fzf = {
       enable = true;
@@ -71,9 +83,47 @@ in
       ];
     };
     programs.kitty = {
+       enable = true;
        theme = "Catppuccin-Mocha";
        shellIntegration.enableZshIntegration = true;
+       settings = {
+         font_family = "JerBrainsMono Nerd Font Mono";
+	 font_size = 12;
+	 force_ltr = false;
+	 disable_ligatures = "cursor";
+         cursor_shape = "beam";
+         cursor_blink_interval = 0;
+         inactive_text_alpha = "0.8";
+	 tab_bar_edge = "top";
+	 tab_bar_style = "powerline";
+	 background_opacity = "0.85";
+         sync_to_monitor = true;
+	 shell = ".";
+	 enable_audio_bell = false;
+       };
+       extraConfig = "
+         map ctrl+shift+n new_os_window_with_cwd
+	 map f2 launch --cwd=current --type=tab
+	 map ctrl+shift+t new_tab_with_cwd
+	 map ctrl+j next_window
+	 map ctrl+k previous_window
+         map ctrl+; combine : clear_terminal scrollback active : send_text normal,application \x0c
+       ";
     };
+    #programs.neovim = {
+    #  enable = true;
+    #  defaultEditor = true;
+    #  plugins = with pkgs.vimPlugins; [
+    #    LazyVim
+    #	nvim-treesitter 
+    #	nvim-treesitter.withAllGrammars
+    #	nvim-treesitter-parsers.c
+    #  ];
+    #  extraPackages = with pkgs; [
+    #    python311Packages.pynvim
+    #	python3
+    #  ];
+    #};
   };
 
   # Bootloader.
@@ -131,8 +181,8 @@ in
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-  # Add user to the audio group.
-  users.extraUsers.ppg.extraGroups = ["audio"];
+  # Add user to the audio and video group.
+  users.extraUsers.${user}.extraGroups = ["audio"];
 
   # Enable full Pulse Audio package
   hardware.pulseaudio.package = pkgs.pulseaudioFull;
@@ -150,9 +200,9 @@ in
   services.actkbd = {
     enable = true;
     bindings = [
-      { keys = [ 113 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ppg -c 'amixer -q set Master toggle'"; }
-      { keys = [ 114 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ppg -c 'amixer -q set Master 5%- unmute'"; }
-      { keys = [ 115 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ppg -c 'amixer -q set Master 5%+ unmute'"; }
+      { keys = [ 113 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master toggle'"; }
+      { keys = [ 114 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master 5%- unmute'"; }
+      { keys = [ 115 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master 5%+ unmute'"; }
     ];
   };
   
@@ -164,14 +214,15 @@ in
   users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.ppg = {
+  users.users.${user} = {
     isNormalUser = true;
-    description = "ppg";
+    description = "${user}";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       firefox
       vesktop
       sdrpp
+      neovim
     ];
   };
 
@@ -185,11 +236,25 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    grim
+    slurp
+    wl-clipboard
+    mako
     wget
-    neovim
-    kitty
+    btop
+    cowsay
+    fortune
     lazygit
-    python3
+    kitty
+    xclip
+    tree
+    (unstable.python3.withPackages (ps: with ps; [
+      pip
+      pynvim
+    ]))
+    tree-sitter
+    unzip
+    nodejs_21
     zsh
     neofetch
     git
@@ -200,9 +265,12 @@ in
     fzf
     procps
     tmux
-    syncthingtray
+    ripgrep
+    remmina
+    syncthing
     electron
     unstable.obsidian
+    tty-solitaire
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
