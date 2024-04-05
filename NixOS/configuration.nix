@@ -15,9 +15,6 @@ let
   # sudo nix-channel --update
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
 
-  #xfce xfconf package
-  xfconf = pkgs.xfce.xfconf;
-
   # Change to your user and hostname here
   user = "ppg";
   hostname = "noiamnothere";
