@@ -15,6 +15,9 @@ let
   # sudo nix-channel --update
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
 
+  #xfce xfconf package
+  xfconf = pkgs.xfce.xfconf;
+
   # Change to your user and hostname here
   user = "ppg";
   hostname = "noiamnothere";
@@ -34,7 +37,18 @@ in
   home-manager.users.${user} = {
     home.stateVersion = "23.11";
 
+
     # Application configurations below
+
+    # rofi -show drun
+    programs.rofi = {
+      enable = true;
+    };
+    home.file.".config/rofi" = {
+      source = /home/${user}/DotFiles/NixOS/rofi;
+      recursive = true;
+      executable = true;     
+    };
 
     # zsh configurations
     programs.zsh = {
@@ -179,17 +193,20 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the XFCE Desktop Environment.
-  services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.desktopManager.xfce.enable = true;
-
-  # Configure keymap in X11
+  # Configure xserver
   services.xserver = {
+    enable = true;
     layout = "us";
     xkbVariant = "";
+    
+    # Display Manager 
+    displayManager = {
+      lightdm.enable = true;
+    };
+    # Desktop Manager
+    desktopManager.xfce = {
+      enable = true;
+    };
   };
 
   # Enable CUPS to print documents.
@@ -247,7 +264,7 @@ in
       neovim
       sdrpp
     ];
-  };    
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -280,6 +297,7 @@ in
     fzf
     git
     wget
+    rofi
     unzip
     procps
     ripgrep
