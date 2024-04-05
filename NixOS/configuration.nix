@@ -65,7 +65,12 @@ in
 
       history.size = 10000;
       #history.path = "${config.xdg.dataHome}/zsh/history";
-      history.path = "$HOME/.zsh_history";
+      history.path = "../../.zsh_history";
+    };
+    home.file.".config/.nvim" = {
+      source = /home/${user}/DotFiles/NixOS/nvim;
+      recursive = true;
+      executable = true;
     };
     programs.fzf = {
       enable = true;
@@ -103,20 +108,20 @@ in
          map ctrl+; combine : clear_terminal scrollback active : send_text normal,application \x0c
        ";
     };
-    programs.neovim = {
-      enable = true;
-      defaultEditor = true;
-      plugins = with pkgs.vimPlugins; [
-        LazyVim
-	nvim-treesitter 
-	nvim-treesitter.withAllGrammars
-	nvim-treesitter-parsers.c
-      ];
-      extraPackages = with pkgs; [
-        python311Packages.pynvim
-	python3
-      ];
-    };
+    #programs.neovim = {
+    #  enable = true;
+    #  defaultEditor = true;
+    #  plugins = with pkgs.vimPlugins; [
+    #    LazyVim
+    #	nvim-treesitter 
+    #	nvim-treesitter.withAllGrammars
+    #	nvim-treesitter-parsers.c
+    #  ];
+    #  extraPackages = with pkgs; [
+    #    python311Packages.pynvim
+    #	python3
+    #  ];
+    #};
   };
 
   # Bootloader.
@@ -215,6 +220,7 @@ in
       firefox
       vesktop
       sdrpp
+      neovim
     ];
   };
 
@@ -236,7 +242,6 @@ in
     btop
     cowsay
     fortune
-    neovim
     lazygit
     kitty
     xclip
