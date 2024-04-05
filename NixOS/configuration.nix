@@ -2,10 +2,11 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.11.tar.gz";
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+  user = "ppg";
 in
 {
   imports =
@@ -14,8 +15,9 @@ in
       (import "${home-manager}/nixos")
     ];
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  home-manager.users.ppg = {
+  home-manager.users.${user} = {
     /* The home.stateVersion option does not have a default and must be set */
     home.stateVersion = "23.11";
     /* Here goes the rest of your home-manager config, e.g. home.packages = [ pkgs.foo ]; */
@@ -52,10 +54,13 @@ in
         v = "nvim";
 	e = "exit";
 	c = "clear";
+	cs = "sudo nix-store --gc";
 	py = "python3";
         lg = "lazygit";
         ll = "ls -l";
+	edit = "sudo nvim /etc/nixos/configuration.nix";
         update = "sudo nixos-rebuild switch";
+	test = "sudo nixos-rebuild test";
       };
 
       history.size = 10000;
@@ -103,9 +108,13 @@ in
       defaultEditor = true;
       plugins = with pkgs.vimPlugins; [
         LazyVim
-        nvim-treesitter 
+	nvim-treesitter 
 	nvim-treesitter.withAllGrammars
 	nvim-treesitter-parsers.c
+      ];
+      extraPackages = with pkgs; [
+        python311Packages.pynvim
+	python3
       ];
     };
   };
@@ -165,7 +174,7 @@ in
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-  # Add user to the audio group.
+  # Add user to the audio and video group.
   users.extraUsers.ppg.extraGroups = ["audio"];
 
   # Enable full Pulse Audio package
@@ -184,9 +193,9 @@ in
   services.actkbd = {
     enable = true;
     bindings = [
-      { keys = [ 113 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ppg -c 'amixer -q set Master toggle'"; }
-      { keys = [ 114 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ppg -c 'amixer -q set Master 5%- unmute'"; }
-      { keys = [ 115 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ppg -c 'amixer -q set Master 5%+ unmute'"; }
+      { keys = [ 113 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master toggle'"; }
+      { keys = [ 114 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master 5%- unmute'"; }
+      { keys = [ 115 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master 5%+ unmute'"; }
     ];
   };
   
@@ -198,9 +207,9 @@ in
   users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.ppg = {
+  users.users.${user} = {
     isNormalUser = true;
-    description = "ppg";
+    description = "${user}";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       firefox
@@ -219,7 +228,14 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    grim
+    slurp
+    wl-clipboard
+    mako
     wget
+    btop
+    cowsay
+    fortune
     neovim
     lazygit
     kitty
@@ -227,7 +243,7 @@ in
     tree
     python3
     python311Packages.pip
-    python311Packages.pynvim
+    python311Packages.venvShellHook
     unzip
     nodejs_21
     zsh
@@ -241,9 +257,11 @@ in
     procps
     tmux
     ripgrep
-    syncthingtray
+    remmina
+    syncthing
     electron
     unstable.obsidian
+    tty-solitaire
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
