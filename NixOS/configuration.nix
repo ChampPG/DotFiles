@@ -7,7 +7,7 @@
 
 { config, pkgs, lib, ... }:
 let
-  # Add home-manager to configuration.nix
+  # Add home-manager 23.11 to configuration.nix
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.11.tar.gz";
 
   # Run the commands below before updating config
@@ -33,7 +33,9 @@ in
   # home-manager configurations
   home-manager.users.${user} = {
     home.stateVersion = "23.11";
-    
+
+    # Application configurations below
+
     # zsh configurations
     programs.zsh = {
       enable = true;
@@ -45,7 +47,8 @@ in
           src = pkgs.zsh-powerlevel10k;
           file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
         }
-        { 
+        {
+          # powerlevel10k config location in DotFiles
           name = "powerlevel10k-config";
           src = /home/${user}/DotFiles/NixOS;
           file = "p10k.zsh";
@@ -53,29 +56,34 @@ in
       ];
       zplug = {
         enable = true;
-	plugins = [
+        plugins = [
+          { name = "agkozak/zsh-z"; }
+          { name = "belak/zsh-utils"; }
           { name = "jeffreytse/zsh-vi-mode"; }
-	];
+          { name = "zsh-users/zsh-autosuggestions"; }
+          { name = "MichaelAquilina/zsh-you-should-use"; }
+          { name = "zdharma-continuum/fast-syntax-highlighting"; }
+        ];
       };
-      antidote.plugins = [
-        "zsh-users/zsh-autosuggestions"
-        "MichaelAquilina/zsh-you-should-use"
-	"zdharma-continuum/fast-syntax-highlighting"
-	"belak/zsh-utils"
-      ];
+      oh-my-zsh = {
+        enable = true;
+        plugins = [
+          "bgnotify"
+          "python"
+        ];
+      };
       shellAliases = {
         v = "nvim";
-	e = "exit";
-	c = "clear";
-	cs = "sudo nix-store --gc";
-	py = "python3";
+        e = "exit";
+        c = "clear";
+        cs = "sudo nix-store --gc";
+        py = "python";
         lg = "lazygit";
         ll = "ls -l";
-	edit = "sudo nvim /etc/nixos/configuration.nix";
+        test = "sudo nixos-rebuild test";
+        edit = "sudo nvim /etc/nixos/configuration.nix";
         update = "sudo nixos-rebuild switch";
-	test = "sudo nixos-rebuild test";
       };
-
       history.size = 10000;
       history.path = "/home/${user}.zsh_history";
     };
@@ -93,7 +101,7 @@ in
       enableZshIntegration = true;
       historyWidgetOptions = [
         "--sort"
-	"--exact"
+        "--exact"
       ];
     };
 
@@ -105,38 +113,45 @@ in
        shellIntegration.enableZshIntegration = true;
        settings = {
          font_family = "JerBrainsMono Nerd Font Mono";
-	 font_size = 12;
-	 force_ltr = false;
-	 disable_ligatures = "cursor";
+         font_size = 12;
+         force_ltr = false;
+         disable_ligatures = "cursor";
          cursor_shape = "beam";
          cursor_blink_interval = 0;
          inactive_text_alpha = "0.8";
-	 tab_bar_edge = "top";
-	 tab_bar_style = "powerline";
-	 background_opacity = "0.85";
+         tab_bar_edge = "top";
+         tab_bar_style = "powerline";
+         background_opacity = "0.85";
          sync_to_monitor = true;
-	 shell = ".";
-	 enable_audio_bell = false;
+         shell = ".";
+         enable_audio_bell = false;
        };
        extraConfig = "
          map ctrl+shift+n new_os_window_with_cwd
-	 map f2 launch --cwd=current --type=tab
-	 map ctrl+shift+t new_tab_with_cwd
-	 map ctrl+j next_window
-	 map ctrl+k previous_window
+         map f2 launch --cwd=current --type=tab
+         map ctrl+shift+t new_tab_with_cwd
+         map ctrl+j next_window
+         map ctrl+k previous_window
          map ctrl+; combine : clear_terminal scrollback active : send_text normal,application \x0c
        ";
     };
   };
 
   # Bootloader.
-  #boot.loader.systemd-boot.enable = true;
-  #boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub.efiSupport = true;
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "nodev";
-  boot.loader.grub.useOSProber = true;
+  # If you would like to have systemd-boot uncomment that line and comment out Grub lines.
+  boot.loader = {
+    # Systemd boot
+    #systemd-boot.enable = true;
+
+    # EFI settings 
+    efi.canTouchEfiVariables = true;
+    
+    # Grub configuration
+    grub.enable = true;
+    grub.device = "nodev";
+    grub.efiSupport = true;
+    grub.useOSProber = true;
+  };
 
   # Setting Hostname
   networking.hostName = "${hostname}"; # Define your hostname.
@@ -232,7 +247,7 @@ in
       neovim
       sdrpp
     ];
-  };   
+  };    
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
