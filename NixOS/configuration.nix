@@ -2,6 +2,9 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+# To switch this config to main nixos config run the command below
+# sudo nixos-rebuild switch -I nixos-config=/home/ppg/DotFiles/NixOS/configuration.nix
+
 { config, pkgs, lib, ... }:
 let
   # Add home-manager to configuration.nix
