@@ -5,6 +5,8 @@
 { config, pkgs, lib, ... }:
 let
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.11.tar.gz";
+  # sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
+  # sudo nix-channel --update
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
   user = "ppg";
 in
@@ -34,7 +36,7 @@ in
         }
         { 
           name = "powerlevel10k-config";
-          src = ./p10k-config;
+          src = /home/ppg/DotFiles/NixOS;
           file = "p10k.zsh";
         }
       ];
@@ -67,7 +69,7 @@ in
       #history.path = "${config.xdg.dataHome}/zsh/history";
       history.path = "../../.zsh_history";
     };
-    home.file.".config/.nvim" = {
+    home.file.".config/nvim" = {
       source = /home/${user}/DotFiles/NixOS/nvim;
       recursive = true;
       executable = true;
@@ -246,9 +248,11 @@ in
     kitty
     xclip
     tree
-    python3
-    python311Packages.pip
-    python311Packages.venvShellHook
+    (unstable.python3.withPackages (ps: with ps; [
+      pip
+      pynvim
+    ]))
+    tree-sitter
     unzip
     nodejs_21
     zsh

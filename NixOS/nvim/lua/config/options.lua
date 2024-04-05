@@ -11,7 +11,7 @@ opt.clipboard = "" -- do NOT use system clipboard (unnamedplus), the default Laz
 -- vim.g.python3_host_prog = "/usr/bin/python3"
 
 -- NixOS
-vim.g.python3_host_prog = "/home/ppg/.venv/bin/python3"
+vim.g.python3_host_prog = "/run/current-system/sw/bin/python3"
 
 -- disable format on save (works w/ LSP, format functions, etc. in LazyVim)
 vim.g.autoformat = false
