@@ -106,20 +106,6 @@ in
       executable = true;
     };
 
-    # Set location for xfce4 config
-   # home.file.".config/xfce4" = {
-   #   source = /home/${user}/DotFiles/NixOS/xfce4;
-   #   recursive = true;
-   #   executable = true;
-   # };
-
-   # # Set location for themes
-   # home.file.".themes" = {
-   #   source = /home/${user}/DotFiles/themes;
-   #   recursive = true;
-   #   executable = true;
-   # };
-
     # Add fuzzy finder integration
     programs.fzf = {
       enable = true;
@@ -273,6 +259,8 @@ in
       vesktop
       neovim
       sdrpp
+      unzip
+      exiftool
     ];
   };
 

@@ -2,28 +2,54 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+# To switch this config to main nixos config run the command below
+# sudo nixos-rebuild switch -I nixos-config=/home/ppg/DotFiles/NixOS/configuration.nix
+
 { config, pkgs, lib, ... }:
 let
+  # Add home-manager 23.11 to configuration.nix
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.11.tar.gz";
+
+  # Run the commands below before updating config
+  # sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
+  # sudo nix-channel --update
   unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+
+  # Change to your user and hostname here
   user = "ppg";
+  hostname = "noiamnothere";
 in
 {
+  # Importing hardware configuration and home-manager
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       (import "${home-manager}/nixos")
     ];
 
+  # Allow flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # home-manager configurations
   home-manager.users.${user} = {
-    /* The home.stateVersion option does not have a default and must be set */
     home.stateVersion = "23.11";
-    /* Here goes the rest of your home-manager config, e.g. home.packages = [ pkgs.foo ]; */
+
+    # Application configurations below
+
+    # rofi -show drun
+    programs.rofi = {
+      enable = true;
+    };
+    home.file.".config/rofi" = {
+      source = /home/${user}/DotFiles/NixOS/rofi;
+      recursive = true;
+      executable = true;
+    };
+
+    # zsh configurations
     programs.zsh = {
       enable = true;
       enableCompletion = true;
-      #autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
       plugins = [
         {
@@ -31,108 +57,115 @@ in
           src = pkgs.zsh-powerlevel10k;
           file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
         }
-        { 
+        {
+          # powerlevel10k config location in DotFiles
           name = "powerlevel10k-config";
-          src = ./p10k-config;
+          src = /home/${user}/DotFiles/NixOS;
           file = "p10k.zsh";
         }
       ];
       zplug = {
         enable = true;
-	plugins = [
+        plugins = [
+          { name = "agkozak/zsh-z"; }
+          { name = "belak/zsh-utils"; }
           { name = "jeffreytse/zsh-vi-mode"; }
-	];
+          { name = "zsh-users/zsh-autosuggestions"; }
+          { name = "MichaelAquilina/zsh-you-should-use"; }
+          { name = "zdharma-continuum/fast-syntax-highlighting"; }
+        ];
       };
-      antidote.plugins = [
-        "zsh-users/zsh-autosuggestions"
-        "MichaelAquilina/zsh-you-should-use"
-	"zdharma-continuum/fast-syntax-highlighting"
-	"belak/zsh-utils"
-      ];
+      oh-my-zsh = {
+        enable = true;
+        plugins = [
+          "bgnotify"
+          "python"
+        ];
+      };
       shellAliases = {
         v = "nvim";
-	e = "exit";
-	c = "clear";
-	cs = "sudo nix-store --gc";
-	py = "python3";
+        e = "exit";
+        c = "clear";
+        cs = "sudo nix-store --gc";
+        py = "python";
         lg = "lazygit";
         ll = "ls -l";
-	edit = "sudo nvim /etc/nixos/configuration.nix";
+        test = "sudo nixos-rebuild test";
+        edit = "sudo nvim /etc/nixos/configuration.nix";
         update = "sudo nixos-rebuild switch";
-	test = "sudo nixos-rebuild test";
       };
-
       history.size = 10000;
-      #history.path = "${config.xdg.dataHome}/zsh/history";
-      history.path = "$HOME/.zsh_history";
+      history.path = "/home/${user}.zsh_history";
     };
+
+    # Set location for nvim config to DotFiles repo in home directory
+    home.file.".config/nvim" = {
+      source = /home/${user}/DotFiles/NixOS/nvim;
+      recursive = true;
+      executable = true;
+    };
+
+    # Add fuzzy finder integration
     programs.fzf = {
       enable = true;
       enableZshIntegration = true;
       historyWidgetOptions = [
         "--sort"
-	"--exact"
+        "--exact"
       ];
     };
+
+    # Kitty configuration
+    # https://sw.kovidgoyal.net/kitty/conf/
     programs.kitty = {
        enable = true;
        theme = "Catppuccin-Mocha";
        shellIntegration.enableZshIntegration = true;
        settings = {
          font_family = "JerBrainsMono Nerd Font Mono";
-	 font_size = 12;
-	 force_ltr = false;
-	 disable_ligatures = "cursor";
+         font_size = 12;
+         force_ltr = false;
+         disable_ligatures = "cursor";
          cursor_shape = "beam";
          cursor_blink_interval = 0;
          inactive_text_alpha = "0.8";
-	 tab_bar_edge = "top";
-	 tab_bar_style = "powerline";
-	 background_opacity = "0.85";
+         tab_bar_edge = "top";
+         tab_bar_style = "powerline";
+         background_opacity = "0.85";
          sync_to_monitor = true;
-	 shell = ".";
-	 enable_audio_bell = false;
+         shell = ".";
+         enable_audio_bell = false;
        };
        extraConfig = "
          map ctrl+shift+n new_os_window_with_cwd
-	 map f2 launch --cwd=current --type=tab
-	 map ctrl+shift+t new_tab_with_cwd
-	 map ctrl+j next_window
-	 map ctrl+k previous_window
+         map f2 launch --cwd=current --type=tab
+         map ctrl+shift+t new_tab_with_cwd
+         map ctrl+j next_window
+         map ctrl+k previous_window
          map ctrl+; combine : clear_terminal scrollback active : send_text normal,application \x0c
        ";
-    };
-    programs.neovim = {
-      enable = true;
-      defaultEditor = true;
-      plugins = with pkgs.vimPlugins; [
-        LazyVim
-        nvim-treesitter 
-	nvim-treesitter.withAllGrammars
-	nvim-treesitter-parsers.c
-      ];
-      extraPackages = with pkgs; [
-        python311Packages.pynvim
-	python3
-      ];
     };
   };
 
   # Bootloader.
-  #boot.loader.systemd-boot.enable = true;
-  #boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub.efiSupport = true;
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "nodev";
-  boot.loader.grub.useOSProber = true;
+  # If you would like to have systemd-boot uncomment that line and comment out Grub lines.
+  boot.loader = {
+    # Systemd boot
+    #systemd-boot.enable = true;
 
-  networking.hostName = "noiamnothere"; # Define your hostname.
+    # EFI settings
+    efi.canTouchEfiVariables = true;
+
+    # Grub configuration
+    grub.enable = true;
+    grub.device = "nodev";
+    grub.efiSupport = true;
+    grub.useOSProber = true;
+  };
+
+  # Setting Hostname
+  networking.hostName = "${hostname}"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -155,26 +188,31 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the XFCE Desktop Environment.
-  #services.xserver.displayManager.lightdm.enable = true;
-  #services.xserver.desktopManager.xfce.enable = true;
-
-  services.xserver.windowManager.qtile.enable = true;
-
-  # Configure keymap in X11
+  # Configure xserver
   services.xserver = {
+    enable = true;
     layout = "us";
     xkbVariant = "";
+
+    # Display Manager
+    displayManager = {
+      lightdm.enable = true;
+    };
+    # Desktop Manager xfce
+    #desktopManager.xfce = {
+    #  enable = true;
+    #};
+    # Desktop Manager qtiles
+    desktopManager.qtile = {
+      enable = true;
+    };
   };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Add user to the audio and video group.
-  users.extraUsers.ppg.extraGroups = ["audio"];
+  users.extraUsers.${user}.extraGroups = ["audio"];
 
   # Enable full Pulse Audio package
   hardware.pulseaudio.package = pkgs.pulseaudioFull;
@@ -191,19 +229,28 @@ in
   };
   services.actkbd = {
     enable = true;
+    # Fix for lenovo T15 volume buttons
     bindings = [
       { keys = [ 113 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master toggle'"; }
       { keys = [ 114 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master 5%- unmute'"; }
       { keys = [ 115 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master 5%+ unmute'"; }
     ];
   };
-  
+
   # Enable real audio
-  security.rtkit.enable = true; 
+  security.rtkit.enable = true;
 
   # Enable zsh as main shell
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
+
+  # Install Nerd Font
+  fonts.packages = with pkgs; [
+    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+  ];
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${user} = {
@@ -213,53 +260,63 @@ in
     packages = with pkgs; [
       firefox
       vesktop
+      neovim
       sdrpp
     ];
   };
 
-  fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-  ];
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    grim
-    slurp
+    # Programming
+    gcc
+    nodejs_21
+    tree-sitter
+    # unstable python3 require for latest version of pynvim still works with stable
+    (unstable.python3.withPackages (ps: with ps; [
+      pip
+      pynvim
+    ]))
+
+    # Drivers
+    rtl-sdr
+
+    # Clipboards
+    xclip
     wl-clipboard
-    mako
+
+    # Terminal
+    zsh
+    tmux
+    kitty
+
+    # Productivity
+    gh
+    fd
+    fzf
+    git
     wget
+    rofi
+    unzip
+    procps
+    ripgrep
+    remmina
+    lazygit
+    electron
+    syncthing
+    unstable.obsidian
+
+    # Misc
+    tree
+    grim
+    mako
+    slurp
+
+    # Fun
     btop
     cowsay
     fortune
-    neovim
-    lazygit
-    kitty
-    xclip
-    tree
-    python3
-    python311Packages.pip
-    python311Packages.venvShellHook
-    unzip
-    nodejs_21
-    zsh
     neofetch
-    git
-    rtl-sdr
-    gh
-    gcc
-    fd
-    fzf
-    procps
-    tmux
-    ripgrep
-    remmina
-    syncthing
-    electron
-    unstable.obsidian
     tty-solitaire
   ];
 
