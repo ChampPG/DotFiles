@@ -33,8 +33,7 @@ in
   # home-manager configurations
   home-manager.users.${user} = {
     home.stateVersion = "23.11";
-
-
+    
     # Application configurations below
 
     # rofi -show drun
@@ -97,6 +96,12 @@ in
       };
       history.size = 10000;
       history.path = "/home/${user}/.zsh_history";
+    };
+
+    home.file.".config/hypr/" = {
+      source = /home/${user}/DotFiles/NixOS/hypr;
+      recursive = true;
+      executable = true;
     };
 
     # Set location for nvim config to DotFiles repo in home directory
@@ -189,21 +194,30 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Configure xserver
+  # Hyprland 
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+  };
+
+  programs.waybar = {
+    enable = true;
+  };
+
+  # Xserver for Hyprland
   services.xserver = {
     enable = true;
-    layout = "us";
-    xkbVariant = "";
-
-    # Display Manager
     displayManager = {
-      lightdm.enable = true;
-    };
-    # Desktop Manager
-    desktopManager.xfce = {
-      enable = true;
+      sddm = {
+        enable = true;
+        wayland.enable = true;
+        #theme = TODO make sddm theme
+      };
     };
   };
+
+  #xdg.portal.enable = true;
+  #xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -246,6 +260,11 @@ in
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
   ];
 
+  environment.sessionVariables = {
+# Hint electron apps to use wayland
+    NIXOS_OZONE_WL = "1";
+  };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -267,6 +286,9 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    # Hyprland
+    waybar
+
     # Programming
     gcc
     nodejs_21
