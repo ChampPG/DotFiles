@@ -20,7 +20,7 @@ let
   hostname = "noiamnothere";
 
   # sddm theme
-  catppuccin-mocha-sddm = pkgs.libsForQt5.callPackage /home/${user}/DotFiles/NixOS/sddm-mocha.nix { };
+  #catppuccin-mocha-sddm = pkgs.libsForQt5.callPackage /home/${user}/DotFiles/NixOS/sddm-mocha.nix { };
 in
 {
   # Importing hardware configuration and home-manager
@@ -112,11 +112,11 @@ in
     programs.waybar = {
       enable = true;
     };
-    home.file.".config/waybar/" = {
-      source = /home/${user}/DotFiles/NixOS/waybar;
-      recursive = true;
-      executable = true;
-    };
+    #home.file.".config/waybar/" = {
+    #  source = /home/${user}/DotFiles/NixOS/waybar;
+    #  recursive = true;
+    #  executable = true;
+    #};
 
     # Set location for nvim config to DotFiles repo in home directory
     home.file.".config/nvim" = {
@@ -221,7 +221,7 @@ in
       sddm = {
         enable = true;
         wayland.enable = true;
-        theme = "catppuccin-mocha-sddm";
+        theme = "catppuccin-mocha-corners";
       };
     };
   };
@@ -267,7 +267,8 @@ in
 
   # Install Nerd Font
   fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    nerdfonts
+    #(nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
   ];
 
   environment.sessionVariables = {
@@ -296,8 +297,12 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    
+    # Themes
+    # "bat" "bottom" "btop" "grub" "hyprland" "k9s" "kvantum" "lazygit" "plymouth" "qt5ct" "refind" "rofi" "starship" "thunderbird" "waybar"
+    catppuccin
     # sddm
-    #catppuccin-mocha-sddm
+    catppuccin-sddm-corners
 
     # Programming
     gcc
