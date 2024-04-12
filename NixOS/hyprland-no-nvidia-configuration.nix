@@ -18,6 +18,9 @@ let
   # Change to your user and hostname here
   user = "ppg";
   hostname = "noiamnothere";
+
+  # sddm theme
+  catppuccin-mocha-sddm = pkgs.libsForQt5.callPackage /home/${user}/DotFiles/NixOS/sddm-mocha.nix { };
 in
 {
   # Importing hardware configuration and home-manager
@@ -98,8 +101,19 @@ in
       history.path = "/home/${user}/.zsh_history";
     };
 
+    # Hyprland
     home.file.".config/hypr/" = {
       source = /home/${user}/DotFiles/NixOS/hypr;
+      recursive = true;
+      executable = true;
+    };
+
+    # Waybar
+    programs.waybar = {
+      enable = true;
+    };
+    home.file.".config/waybar/" = {
+      source = /home/${user}/DotFiles/NixOS/waybar;
       recursive = true;
       executable = true;
     };
@@ -200,10 +214,6 @@ in
     xwayland.enable = true;
   };
 
-  programs.waybar = {
-    enable = true;
-  };
-
   # Xserver for Hyprland
   services.xserver = {
     enable = true;
@@ -211,7 +221,7 @@ in
       sddm = {
         enable = true;
         wayland.enable = true;
-        #theme = TODO make sddm theme
+        theme = "catppuccin-mocha-sddm";
       };
     };
   };
@@ -286,8 +296,8 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    # Hyprland
-    waybar
+    # sddm
+    #catppuccin-mocha-sddm
 
     # Programming
     gcc
