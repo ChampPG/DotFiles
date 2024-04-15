@@ -38,15 +38,26 @@ ethernet _first_ {
         format_down = ""
 }
 
+#battery 0 {
+#        format = "%status   %remaining"
+#        status_chr = ""
+#        status_bat = ""
+#        status_full = ""
+#        hide_seconds = "true"
+#        integer_battery_capacity = "true"
+#        low_threshold = "20"
+#        threshold_type = "time"
+#}
 battery 0 {
-        format = "%status   %remaining"
+	      last_full_capacity = true
+        format = "%status %percentage"
+        format_down = "  No Battery"
         status_chr = ""
-        status_bat = ""
-        status_full = ""
-        hide_seconds = "true"
-        integer_battery_capacity = "true"
-        low_threshold = "20"
-        threshold_type = "time"
+        status_bat = "  "
+        status_unk = "Unknown"
+        status_full = "  "
+        path = "/sys/class/power_supply/BAT%d/uevent"
+        low_threshold = 10
 }
 
 volume master {
@@ -58,5 +69,5 @@ volume master {
 }
 
 tztime local {
-        format = "  %a %b %d  %H:%M:%S"
+        format = "  %a %b %d %H:%M:%S"
 }

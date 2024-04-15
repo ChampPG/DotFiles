@@ -215,7 +215,7 @@ in
     displayManager = {
       lightdm = {
         enable = true;
-        background = /home/ppg/DotFiles/backgrounds/catppuccin_triangle.png;
+        background = /home/${user}/DotFiles/backgrounds/catppuccin_triangle.png;
         greeters = {
           gtk = {
             enable = true;
@@ -317,7 +317,7 @@ in
     unstable.bumblebee-status
     catppuccin-gtk
     wirelesstools
-    xorg.xbacklight
+    brightnessctl
     # "bat" "bottom" "btop" "grub" "hyprland" "k9s" "kvantum" "lazygit" "plymouth" "qt5ct" "refind" "rofi" "starship" "thunderbird" "waybar"
     catppuccin
     picom
