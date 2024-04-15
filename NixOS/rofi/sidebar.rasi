@@ -49,11 +49,11 @@ window {
     location: west;
     anchor:   west;
     border:  0px 2px 0px 0px;
-    text-color: @lightwhite;
+    text-color: @black;
 }
 mode-switcher {
     border: 2px 0px 0px 0px;
-    background-color: @lightblack;
+    background-color: @magenta;
     padding: 4px;
 }
 button selected {
@@ -84,7 +84,7 @@ element selected  normal {
     background-color: @blue;
 }
 element normal active {
-    text-color: @lightblue;
+    text-color: @black;
 }
 element normal urgent {
     text-color: @lightred;
@@ -92,7 +92,7 @@ element normal urgent {
 element alternate normal {
 }
 element alternate active {
-    text-color: @lightblue;
+    text-color: @black;
 }
 element alternate urgent {
     text-color: @lightred;

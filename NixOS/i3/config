@@ -56,7 +56,7 @@ bindsym $mod+x kill
 
 # Start rofi
 bindsym $mod+space exec "rofi -show drun"
-bindsym $mod+alt+space exec "rofi -show run" 
+bindsym $mod+m exec "rofi -show run" 
 
 # Launch browser
 bindsym $mod+b exec "firefox"
@@ -106,6 +106,10 @@ bindsym F2 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $re
 bindsym F1 exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym F4 exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+# Brightness control
+bindsym F6 exec xbacklight -inc 5 # increase screen brightness
+bindsym F5 exec xbacklight -dec 5 # decrease screen brightness
+
 ##############
 # Workspaces #
 ##############
@@ -139,9 +143,9 @@ bindsym $mod+Shift+6 move container to workspace $ws6
 bindsym $mod+Shift+7 move container to workspace $ws7
 
 # Open applications in certain workspaces
-assign [class="^firefox$"] → $ws1
-assign [class="^kitty$"] → $ws2
-assign [class="^TelegramDesktop$"] → $ws6
+#assign [class="^firefox$"] → $ws1
+#assign [class="^kitty$"] → $ws2
+#assign [class="^TelegramDesktop$"] → $ws6
 
 # Focus window opened automatically
 for_window [class="."] focus

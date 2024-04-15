@@ -35,6 +35,14 @@ in
     home.stateVersion = "23.11";
     
     # Application configurations below
+    programs.rofi = {
+      enable = true;
+    };
+    home.file.".config/rofi" = {
+      source = /home/${user}/DotFiles/NixOS/rofi;
+      recursive = true;
+      executable = true;
+    };
 
     # zsh configurations
     programs.zsh = {
@@ -141,7 +149,7 @@ in
        extraConfig = "
          map ctrl+shift+n new_os_window_with_cwd
          map f2 launch --cwd=current --type=tab
-        map ctrl+shift+t new_tab_with_cwd
+         map ctrl+shift+t new_tab_with_cwd
          map ctrl+j next_window
          map ctrl+k previous_window
          map ctrl+; combine : clear_terminal scrollback active : send_text normal,application \x0c
@@ -207,7 +215,7 @@ in
     displayManager = {
       lightdm = {
         enable = true;
-        #background = "/home/${user}/DotFiles/backgrounds/catppuccin_triangle.png";
+        background = /home/ppg/DotFiles/backgrounds/catppuccin_triangle.png;
         greeters = {
           gtk = {
             enable = true;
@@ -220,6 +228,9 @@ in
                 variant = "macchiato";
               };
             };
+          extraConfig = ''
+            user-background = true
+          '';
           };
         };
       };
@@ -306,6 +317,7 @@ in
     unstable.bumblebee-status
     catppuccin-gtk
     wirelesstools
+    xorg.xbacklight
     # "bat" "bottom" "btop" "grub" "hyprland" "k9s" "kvantum" "lazygit" "plymouth" "qt5ct" "refind" "rofi" "starship" "thunderbird" "waybar"
     catppuccin
     picom
