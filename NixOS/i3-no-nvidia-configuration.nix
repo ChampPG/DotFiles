@@ -18,16 +18,6 @@ let
   # Change to your user and hostname here
   user = "ppg";
   hostname = "noiamnothere";
-
-  # sddm theme
-  #catppuccin-mocha-sddm = pkgs.libsForQt5.callPackage /home/${user}/DotFiles/NixOS/sddm-mocha.nix { };
-
-  # set wallpaper
-  #set_wallpaper = pkgs.writeShellScriptBin "set_wallpaper" ''
-  #  if command -v swww >/dev/null 2>&1; then 
-  #        swww img ~/DotFiles/backgrounds/catppuccin_triangle.png --transition-type simple
-  #  fi
-  #'';
 in
 {
   # Importing hardware configuration and home-manager
@@ -45,16 +35,6 @@ in
     home.stateVersion = "23.11";
     
     # Application configurations below
-
-    # rofi -show drun
-    programs.rofi = {
-      enable = true;
-    };
-    home.file.".config/rofi" = {
-      source = /home/${user}/DotFiles/NixOS/rofi;
-      recursive = true;
-      executable = true;
-    };
 
     # zsh configurations
     programs.zsh = {
@@ -108,22 +88,21 @@ in
       history.path = "/home/${user}/.zsh_history";
     };
 
-    # Hyprland
-    home.file.".config/hypr/" = {
-      source = /home/${user}/DotFiles/NixOS/hypr;
+    # Set location for nvim config to DotFiles repo in home directory
+    home.file.".config/nvim" = {
+      source = /home/${user}/DotFiles/NixOS/nvim;
       recursive = true;
       executable = true;
     };
 
-    #home.file.".config/waybar/" = {
-    #  source = /home/${user}/DotFiles/NixOS/waybar;
-    #  recursive = true;
-    #  executable = true;
-    #};
-
-    # Set location for nvim config to DotFiles repo in home directory
-    home.file.".config/nvim" = {
-      source = /home/${user}/DotFiles/NixOS/nvim;
+    # Set location for i3 config
+    home.file.".config/i3" = {
+      source = /home/${user}/DotFiles/NixOS/i3;
+      recursive = true;
+      executable = true;
+    };
+    home.file.".config/i3status" = {
+      source = /home/${user}/DotFiles/NixOS/i3status;
       recursive = true;
       executable = true;
     };
@@ -162,7 +141,7 @@ in
        extraConfig = "
          map ctrl+shift+n new_os_window_with_cwd
          map f2 launch --cwd=current --type=tab
-         map ctrl+shift+t new_tab_with_cwd
+        map ctrl+shift+t new_tab_with_cwd
          map ctrl+j next_window
          map ctrl+k previous_window
          map ctrl+; combine : clear_terminal scrollback active : send_text normal,application \x0c
@@ -211,20 +190,38 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Hyprland 
-  programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;
-  };
-
-  # Xserver for Hyprland
+  # Xserver for i3
   services.xserver = {
     enable = true;
-    displayManager = {
-      sddm = {
+    windowManager = {
+      i3 = {
         enable = true;
-        wayland.enable = true;
-        theme = "catppuccin-sddm-corners";
+        extraPackages = with pkgs; [
+          dmenu #application launcher most people use
+          i3status # gives you the default i3 status bar
+          i3lock #default i3 screen locker
+          i3blocks #if you are planning on using i3blocks over i3status
+        ];
+      };
+    };
+    displayManager = {
+      lightdm = {
+        enable = true;
+        #background = "/home/${user}/DotFiles/backgrounds/catppuccin_triangle.png";
+        greeters = {
+          gtk = {
+            enable = true;
+            theme = {
+              name = "Catppuccin-Macchiato-Compact-Pink-Dark";
+              package = pkgs.catppuccin-gtk.override {
+                accents = [ "pink" ];
+                size = "compact";
+                tweaks = [ "rimless" "black" ];
+                variant = "macchiato";
+              };
+            };
+          };
+        };
       };
     };
   };
@@ -240,25 +237,22 @@ in
 
   hardware.enableAllFirmware = true;
 
-  # Enable sound with pipewire.
-  sound.enable = true;
-  hardware.pulseaudio = {
+  # rtkit is optional but recommended
+  services.pipewire = {
     enable = true;
-    package = pkgs.pulseaudioFull;
-  #  support32Bit = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    #jack.enable = true;
   };
+
   sound.mediaKeys = {
     enable = true;
     volumeStep = "5%";
   };
   services.actkbd = {
     enable = true;
-    # Fix for lenovo T15 volume buttons
-    bindings = [
-      { keys = [ 113 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master toggle'"; }
-      { keys = [ 114 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master 5%- unmute'"; }
-      { keys = [ 115 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/runuser -l ${user} -c 'amixer -q set Master 5%+ unmute'"; }
-    ];
   };
 
   # Enable real audio
@@ -309,14 +303,15 @@ in
   environment.systemPackages = with pkgs; [
     
     # Themes
-    # wallpaper
-    swww
-    #set_wallpaper
+    unstable.bumblebee-status
+    catppuccin-gtk
+    wirelesstools
     # "bat" "bottom" "btop" "grub" "hyprland" "k9s" "kvantum" "lazygit" "plymouth" "qt5ct" "refind" "rofi" "starship" "thunderbird" "waybar"
     catppuccin
-    # sddm
-    catppuccin-sddm-corners
-
+    picom
+    feh
+    iw
+   
     # Programming
     gcc
     nodejs_21
@@ -325,6 +320,8 @@ in
     (unstable.python3.withPackages (ps: with ps; [
       pip
       pynvim
+      psutil
+      netifaces
     ]))
 
     # Drivers
@@ -362,8 +359,6 @@ in
     grim
     mako
     slurp
-    waybar
-    pavucontrol
     libsForQt5.qt5.qtgraphicaleffects
 
     # Fun
