@@ -110,8 +110,8 @@ bindsym F1 exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $re
 bindsym F4 exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
 # Brightness control
-bindsym F6 exec --no-startup-id brightnessctl set 5%+ 
-bindsym F5 exec --no-startup-id brightnessctl set 5%-
+bindsym F6 exec --no-startup-id brightnessctl set 10%+ 
+bindsym F5 exec --no-startup-id brightnessctl set 10%-
 
 ##############
 # Workspaces #
@@ -119,13 +119,13 @@ bindsym F5 exec --no-startup-id brightnessctl set 5%-
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1:<span color='#a6d189'> </span>"
-set $ws2 "2:<span color='#babbf1'> </span>"
-set $ws3 "3:<span color='#e78284'> </span>"
-set $ws4 "4:<span color='#8caaee'>󰈙 </span>"
-set $ws5 "5:<span color='#ef9f76'> </span>"
-set $ws6 "6:<span color='#81c8be'> </span>"
-set $ws7 "7:<span color='#ca9ee6'>󱓞 </span>"
+set $ws1 "1:<span color='#f5e0dc'> </span>"
+set $ws2 "2:<span color='#89dceb'> </span>"
+set $ws3 "3:<span color='#f5c2e7'> </span>"
+set $ws4 "4:<span color='#cba6f7'>󰈙 </span>"
+set $ws5 "5:<span color='#f38ba8'> </span>"
+set $ws6 "6:<span color='#fab387'> </span>"
+set $ws7 "7:<span color='#a6e3a1'>󱓞 </span>"
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1 
@@ -236,8 +236,8 @@ bar {
 	height 27
  	font pango:JetBrainsMono 12
  	colors {
-		background #302D41
-		separator #D9E0EE
+		background #1e1e2e
+		separator #cdd6f4
 		focused_workspace #302D41 #302D41 #D9E0EE
 		active_workspace #1E1E2E #1E1E2E #808080
  }

@@ -117,6 +117,13 @@ in
       executable = true;
     };
 
+    # Btop configuration file
+    home.file.".config/btop" = {
+      source = /home/${user}/DotFiles/NixOS/btop;
+      recursive = true;
+      executable = true;
+    };
+
     # Add fuzzy finder integration
     programs.fzf = {
       enable = true;
@@ -224,12 +231,12 @@ in
           gtk = {
             enable = true;
             theme = {
-              name = "Catppuccin-Macchiato-Compact-Pink-Dark";
+              name = "Catppuccin-Mocha-Compact-Lavender-Dark";
               package = pkgs.catppuccin-gtk.override {
-                accents = [ "pink" ];
+                accents = [ "lavender" ];
                 size = "compact";
                 tweaks = [ "rimless" "black" ];
-                variant = "macchiato";
+                variant = "mocha";
               };
             };
           extraConfig = ''
@@ -365,6 +372,7 @@ in
     remmina
     lazygit
     electron
+    flameshot
     syncthing
     pulseaudio
     wireguard-tools
@@ -381,6 +389,8 @@ in
     btop
     cowsay
     fortune
+    cbonsai
+    cmatrix
     neofetch
     tty-solitaire
   ];
