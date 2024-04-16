@@ -91,6 +91,8 @@ in
         test = "sudo nixos-rebuild test";
         edit = "sudo nvim /etc/nixos/configuration.nix";
         update = "sudo nixos-rebuild switch";
+        vpnup = "sudo wg-quick up ~/Documents/vpn/home.conf";
+        vpndown = "sudo wg-quick down ~/Documents/vpn/home.conf";
       };
       history.size = 10000;
       history.path = "/home/${user}/.zsh_history";
@@ -179,6 +181,8 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
+  # Allow wireguard (THIS LINE IS REQUIRED FOR WIREGUARD FOR THE LOVE OF GOD DON'T FORGET IT!!!)
+  networking.firewall.allowedUDPPorts = [51820];
 
   # Set your time zone.
   time.timeZone = "America/New_York";

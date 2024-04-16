@@ -22,9 +22,9 @@ order += "volume master"
 order += "tztime local"
 
 run_watch VPN {
-        pidfile = "/sys/class/net/tun0"
-	format = "%title:  "
-	format_down = "%title:  "
+        pidfile = "/sys/class/net/home"
+        format = "%title:  "
+        format_down = "%title:  "
 }
 
 wireless _first_ {
@@ -38,16 +38,6 @@ ethernet _first_ {
         format_down = ""
 }
 
-#battery 0 {
-#        format = "%status   %remaining"
-#        status_chr = ""
-#        status_bat = ""
-#        status_full = ""
-#        hide_seconds = "true"
-#        integer_battery_capacity = "true"
-#        low_threshold = "20"
-#        threshold_type = "time"
-#}
 battery 0 {
 	      last_full_capacity = true
         format = "%status %percentage"
