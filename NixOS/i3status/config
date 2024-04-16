@@ -14,15 +14,15 @@ general {
         color_bad =      '#aa0e50'
         interval = 5
 }
-order += "run_watch VPN"
+order += "path_exists VPN"
 order += "wireless _first_"
 order += "ethernet _first_"
 order += "battery 0"
 order += "volume master"
 order += "tztime local"
 
-run_watch VPN {
-        pidfile = "/sys/class/net/home"
+path_exists VPN {
+        path = "/sys/class/net/home"
         format = "%title:  "
         format_down = "%title:  "
 }
