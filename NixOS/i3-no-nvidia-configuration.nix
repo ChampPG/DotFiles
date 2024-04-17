@@ -325,7 +325,7 @@ in
   environment.systemPackages = with pkgs; [
     
     # Themes
-    unstable.bumblebee-status
+    #unstable.bumblebee-status
     catppuccin-gtk
     wirelesstools
     brightnessctl
@@ -343,8 +343,6 @@ in
     (unstable.python3.withPackages (ps: with ps; [
       pip
       pynvim
-      psutil
-      netifaces
     ]))
 
     # Drivers
@@ -373,8 +371,9 @@ in
     lazygit
     electron
     flameshot
-    syncthing
     pulseaudio
+    xfce.thunar
+    syncthingtray
     wireguard-tools
     unstable.obsidian
 
